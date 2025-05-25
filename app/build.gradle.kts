@@ -23,6 +23,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}" // Common general exclusions
             excludes += "META-INF/LICENSE.txt"
             excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/NOTICE.md"
             excludes += "META-INF/DEPENDENCIES" // Specifically exclude the problematic file
             // You can add more specific exclusion if needed
             // Or, if you want to pick the first one encountered:
