@@ -49,7 +49,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.ros2.library)
+    implementation(libs.ros2.library) {
+            exclude(group = "org.apache.logging.log4j", module = "log4j-core")
+            // You might also need to exclude other log4j modules if conflicts persist
+        }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
