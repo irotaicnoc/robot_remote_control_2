@@ -24,17 +24,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        rosNode = RosNode("android_ihmc_controller")
+        // Initialize RosNode with a unique name for this Android controller
+        rosNode = RosNode("android_robot_controller") // Or any other suitable name
 
         // Initialize ROS Node in a background thread
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) { // Perform network operations off the main thread
-                rosNode.init()
+            try {
+                withContext(Dispatchers.IO) { // Perform network operations off the main thread
+                    rosNode.init()
+                }
+                // You could add a state here to update UI, e.g., show "Connected"
+            } catch (e: Exception) {
+                // Handle initialization errors (e.g., show a Toast to the user)
+                e.printStackTrace() // Log the error
+                // Potentially update UI to indicate connection failure
             }
         }
 
         setContent {
-            RobotControlScreen(rosNode) // Your existing Composable
+            RobotControlScreen(rosNode)
         }
     }
 
@@ -50,7 +58,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RobotControlScreen(rosNode: RosNode) { // This Composable should remain the same
+fun RobotControlScreen(rosNode: RosNode) {
     var linearSpeed by remember { mutableStateOf(0.0) }
     var angularSpeed by remember { mutableStateOf(0.0) }
 
@@ -80,10 +88,12 @@ fun RobotControlScreen(rosNode: RosNode) { // This Composable should remain the 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(onClick = {
-            // Publishing can also be moved to a background thread if it's blocking
-            // For simple commands, it might be okay on the main thread if quick,
-            // but for robustness, consider:
-            // CoroutineScope(Dispatchers.IO).launch {
+            // Publishing is a network operation, consider a coroutine if it might block.
+            // For simple, infrequent commands, direct call might be acceptable,
+            // but for robustness with ROS, using a coroutine is safer.
+            // This example directly calls it, assuming rosNode.publishTwist is quick.
+            // If you experience ANRs or stutters, move it to a coroutine:
+            // lifecycleScope.launch(Dispatchers.IO) { // Or a custom scope
             //     rosNode.publishTwist(linearSpeed, angularSpeed)
             // }
             rosNode.publishTwist(linearSpeed, angularSpeed)
