@@ -18,6 +18,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}" // Common general exclusions
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/DEPENDENCIES" // Specifically exclude the problematic file
+            // You can add more specific exclusion if needed
+            // Or, if you want to pick the first one encountered:
+            // pickFirsts += "META-INF/DEPENDENCIES"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
